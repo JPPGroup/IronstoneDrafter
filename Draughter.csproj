@@ -168,6 +168,10 @@
       <Project>{3CFB4039-225B-4974-8117-284BA5C8036C}</Project>
       <Name>BackgroundPipeline.Autocad</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BackgroundPipeline\src\BackgroundPipeline\BackgroundPipeline.csproj">
+      <Project>{ef8736a3-2deb-4d2e-9837-2cd6bff7cd08}</Project>
+      <Name>BackgroundPipeline</Name>
+    </ProjectReference>
     <ProjectReference Include="Draughter.TaskPayloads.Concretes\Draughter.TaskPayloads.Concretes.csproj">
       <Project>{74ac1a17-ec00-410e-8b46-c84b7c149fb9}</Project>
       <Name>Draughter.TaskPayloads.Concretes</Name>

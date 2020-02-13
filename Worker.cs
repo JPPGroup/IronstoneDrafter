@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,8 +8,7 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using BackgroundPipeline.Autocad;
 using Jpp.Ironstone.Core;
-using Jpp.Ironstone.Draughter.TaskPayloads;
-using File = Jpp.Ironstone.Draughter.TaskPayloads.File;
+using File = Jpp.BackgroundPipeline.File;
 
 namespace Jpp.Ironstone.Draughter
 {
@@ -18,8 +16,9 @@ namespace Jpp.Ironstone.Draughter
     {
         private WorkerConnection _connection;
         private RemoteTask _currentTask;
+        private object _currentTaskLock = new Object();
         private bool _fetchingTask = false;
-        private object _fetchingTaskLock;
+        private object _fetchingTaskLock = new Object();
 
         [IronstoneCommand]
         [CommandMethod("D_BeginWork", CommandFlags.Session)]
@@ -39,53 +38,49 @@ namespace Jpp.Ironstone.Draughter
             System.Windows.Forms.Application.AddMessageFilter(filter);
 
             // TODO: Pull username and password from settings file
-            _connection = new WorkerConnection("mq.group.cluster.jppuk.net", "jpp", "jpp");
-            
-            RemoteTask rt = new RemoteTask();
-            rt.TaskPayload = new List<ITaskPayload>();
-            rt.TaskPayload.Add(new JppPlotToPdf1()
+            using (_connection = new WorkerConnection("mq.group.cluster.jppuk.net", "jpp", "jpp"))
             {
-                DrawingNumbers = new string[]
+
+                using (dm.MdiActiveDocument.LockDocument())
                 {
-                    "01",
-                    "02"
-                },
-                PlotAll = true
-            });
-
-            string s = rt.SerializedTaskPayload;
-
-            // Start the loop
-            while (true)
-            {
-                // Check for user input events
-                System.Windows.Forms.Application.DoEvents();
-
-                // Check whether the filter has set the flag
-                if (filter.bCanceled == true)
-                {
-                    ed.WriteMessage("\nWork cancelled.");
-                    break;
-                }
-
-                lock (_currentTask)
-                {
-                    lock (_fetchingTaskLock)
+                    // Start the loop
+                    while (true)
                     {
-                        if (_currentTask == null && !_fetchingTask)
+                        // Check for user input events
+                        System.Windows.Forms.Application.DoEvents();
+
+                        // Check whether the filter has set the flag
+                        if (filter.bCanceled == true)
                         {
-                            BeginFetchNextTask();
+                            ed.WriteMessage("\nWork cancelled.");
+                            break;
                         }
-                    }
 
-                    if (_currentTask != null)
-                    {
-                        WorkOnRemoteTask();
+                        lock (_currentTaskLock)
+                        {
+                            lock (_fetchingTaskLock)
+                            {
+                                if (_currentTask == null && !_fetchingTask)
+                                {
+                                    BeginFetchNextTask();
+                                }
+                            }
+
+                            if (_currentTask != null)
+                            {
+                                WorkOnRemoteTask();
+                                _connection.SendResponse(_currentTask);
+                                _connection.TaskComplete();
+
+                                _currentTask = null;
+                            }
+                        }
+
+                        Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument
+                            .TransactionManager.QueueForGraphicsFlush();
+                        Thread.Sleep(500);
                     }
                 }
-
-                Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument.TransactionManager.QueueForGraphicsFlush();
-                Thread.Sleep(500);
             }
 
             // We're done - remove the message filter
@@ -102,7 +97,7 @@ namespace Jpp.Ironstone.Draughter
                 }
 
                 RemoteTask t = await _connection.GetRemoteTask();
-                lock (_currentTask)
+                lock (_currentTaskLock)
                 {
                     // Should never be able to double up on task
                     if(_currentTask != null)
@@ -121,7 +116,7 @@ namespace Jpp.Ironstone.Draughter
 
         private void WorkOnRemoteTask()
         {
-            string tempFolder = DecompressWorkingDirectory();
+            /*string tempFolder = DecompressWorkingDirectory();
             // Add work code
 
             foreach (ITaskPayload taskPayload in _currentTask.TaskPayload)
@@ -134,7 +129,7 @@ namespace Jpp.Ironstone.Draughter
             // TODO: Does this need locking?
             _connection.SendResponse(_currentTask);
 
-            _currentTask = null;
+            _currentTask = null;*/
         }
 
         private string DecompressWorkingDirectory()

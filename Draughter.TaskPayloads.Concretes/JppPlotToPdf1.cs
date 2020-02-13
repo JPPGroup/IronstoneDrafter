@@ -5,6 +5,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.PlottingServices;
 using Jpp.Ironstone.DocumentManagement.ObjectModel;
+using File = Jpp.BackgroundPipeline.File;
 
 namespace Jpp.Ironstone.Draughter.TaskPayloads
 {
