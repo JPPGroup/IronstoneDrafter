@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,6 +41,19 @@ namespace Jpp.Ironstone.Draughter
             // TODO: Pull username and password from settings file
             _connection = new WorkerConnection("mq.group.cluster.jppuk.net", "jpp", "jpp");
             
+            RemoteTask rt = new RemoteTask();
+            rt.TaskPayload = new List<ITaskPayload>();
+            rt.TaskPayload.Add(new JppPlotToPdf1()
+            {
+                DrawingNumbers = new string[]
+                {
+                    "01",
+                    "02"
+                },
+                PlotAll = true
+            });
+
+            string s = rt.SerializedTaskPayload;
 
             // Start the loop
             while (true)

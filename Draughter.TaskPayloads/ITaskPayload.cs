@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Jpp.BackgroundPipeline;
 
 namespace Jpp.Ironstone.Draughter.TaskPayloads
 {

@@ -5,4 +5,8 @@
     <RootNamespace>Jpp.Ironstone.Draughter.TaskPayloads</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\BackgroundPipeline\src\BackgroundPipeline\BackgroundPipeline.csproj" />
+  </ItemGroup>
+
 </Project>
