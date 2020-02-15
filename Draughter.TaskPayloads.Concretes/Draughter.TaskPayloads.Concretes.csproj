@@ -68,7 +68,7 @@
       <HintPath>..\packages\AutoUpdate.1.0.15\lib\net47\AutoUpdate.dll</HintPath>
     </Reference>
     <Reference Include="Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Common.0.1.5\lib\netstandard2.0\Common.dll</HintPath>
+      <HintPath>..\packages\Jpp.Common.0.3.7\lib\netstandard2.0\Common.dll</HintPath>
     </Reference>
     <Reference Include="IronstoneCore, Version=0.4.0.24, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\Jpp.Ironstone.Core.0.4.0-devb\lib\net472\IronstoneCore.dll</HintPath>

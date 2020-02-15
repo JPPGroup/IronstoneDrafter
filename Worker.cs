@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -8,6 +7,7 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using BackgroundPipeline.Autocad;
 using Jpp.Ironstone.Core;
+using Jpp.Ironstone.Draughter.TaskPayloads;
 using File = Jpp.BackgroundPipeline.File;
 
 namespace Jpp.Ironstone.Draughter
@@ -116,55 +116,15 @@ namespace Jpp.Ironstone.Draughter
 
         private void WorkOnRemoteTask()
         {
-            /*string tempFolder = DecompressWorkingDirectory();
-            // Add work code
+            WorkingDirectory workDir = new WorkingDirectory(_currentTask.WorkingDirectory);
 
             foreach (ITaskPayload taskPayload in _currentTask.TaskPayload)
             {
-                taskPayload.Execute(_currentTask.WorkingDirectory, tempFolder);
-            }
+                taskPayload.Execute(workDir);
+            }          
 
-            CompressWorkingDirectory(tempFolder);
-
-            // TODO: Does this need locking?
-            _connection.SendResponse(_currentTask);
-
-            _currentTask = null;*/
+            _currentTask.WorkingDirectory = workDir.Export();
         }
-
-        private string DecompressWorkingDirectory()
-        {
-            string tempFolder = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
-            
-            //Save the files
-            foreach (File file in _currentTask.WorkingDirectory)
-            {
-                using (FileStream fs = System.IO.File.Create(Path.Combine(tempFolder, file.Name)))
-                {
-                    fs.Write(file.Data, 0, file.Data.Length);
-                }
-            }
-
-            return tempFolder;
-        }
-
-        private void CompressWorkingDirectory(string path)
-        {
-            _currentTask.WorkingDirectory.Clear();
-            foreach (string file in Directory.GetFiles(path))
-            {
-                File newFile = new File()
-                {
-                    Name = Path.GetFileName(file),
-                    Data = System.IO.File.ReadAllBytes(file)
-                };
-                
-                _currentTask.WorkingDirectory.Add(newFile);
-            }
-
-            Directory.Delete(path, true);
-        }
-    }
     
     public class TerminateMessageFilter : IMessageFilter
     {

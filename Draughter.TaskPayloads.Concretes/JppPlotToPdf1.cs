@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.PlottingServices;
 using Jpp.Ironstone.DocumentManagement.ObjectModel;
-using File = Jpp.BackgroundPipeline.File;
 
 namespace Jpp.Ironstone.Draughter.TaskPayloads
 {
@@ -14,13 +11,17 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
         public string[] DrawingNumbers { get; set; }
         public bool PlotAll { get; set; }
 
-        public void Execute(List<File> workingDirectory, string decompressedPath)
+        private WorkingDirectory _workingDirectory;
+
+        public void Execute(WorkingDirectory workingDirectory)
         {
-            foreach (File f in workingDirectory)
+            _workingDirectory = workingDirectory;
+
+            foreach (string f in _workingDirectory)
             {
-                if (f.Name.EndsWith(".dwg"))
+                if (f.EndsWith(".dwg"))
                 {
-                    OpenScanDrawing(Path.Combine(decompressedPath, f.Name));
+                    OpenScanDrawing(f);
                 }
             }
         }
@@ -63,12 +64,14 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
             psv.SetStdScaleType(ps, StdScaleType.StdScale1To1);
             //psv.SetPlotCentered(ps, true);
 
-            psv.SetPlotConfigurationName(ps, "DWG To PDF.pc3", "ISO A1(841.00 x 594.00 MM)");
+            psv.SetPlotConfigurationName(ps, "DWG To PDF.pc3", "ISO expand A1(841.00 x 594.00 MM)");
 
             plotInfo.OverrideSettings = ps;
             PlotInfoValidator piv = new PlotInfoValidator();
             piv.MediaMatchingPolicy = MatchingPolicy.MatchEnabled;
             piv.Validate(plotInfo);
+
+            string fileName = _workingDirectory.GetPath($"{sheet.JobNumber} - {sheet.DrawingNumber}{sheet.Revision} - {sheet.Name}.pdf");
 
             if (PlotFactory.ProcessPlotState == ProcessPlotState.NotPlotting)
             {
@@ -99,27 +102,21 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                         ppd.UpperPlotProgressRange = 100;
                         ppd.PlotProgressPos = 0;*/
 
-                        // Let's start the plot, at last
-
                         ppd.OnBeginPlot();
                         ppd.IsVisible = false;
                         pe.BeginPlot(ppd, null);
                         
-                        // We'll be plotting a single document
-
-                        /*pe.BeginDocument(
+                        
+                        pe.BeginDocument(
                           plotInfo,
-                          doc.Name,
+                          fileName,
                           null,
                           1,
-                          true, // Let's plot to file
-                          "c:\\test-output"
-                        );*/
-
-                        // Which contains a single sheet
+                          true, 
+                          fileName
+                        );
 
                         ppd.OnBeginSheet();
-
                         ppd.LowerSheetProgressRange = 0;
                         ppd.UpperSheetProgressRange = 100;
                         ppd.SheetProgressPos = 0;
@@ -140,11 +137,9 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                         ppd.OnEndSheet();
 
                         // Finish the document
-
                         pe.EndDocument(null);
 
                         // And finish the plot
-
                         ppd.PlotProgressPos = 100;
                         ppd.OnEndPlot();
                         pe.EndPlot(null);

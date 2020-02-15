@@ -5,6 +5,6 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
 {
     public interface ITaskPayload
     {
-        void Execute(List<File> workingDirectory, string decompressedPath);
+        void Execute(WorkingDirectory workingDirectory);
     }
 }
