@@ -16,7 +16,9 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
         {
             _fileRecord = fileRecord;
 
-            _path = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
+            _path = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetTempFileName()));
+
+            Directory.CreateDirectory(_path);
 
             //Save the files
             foreach (File file in _fileRecord)

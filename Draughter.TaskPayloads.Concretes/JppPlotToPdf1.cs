@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.PlottingServices;
+using Jpp.Ironstone.Core;
+using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.DocumentManagement.ObjectModel;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
@@ -13,6 +16,12 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
         public bool PlotAll { get; set; }
 
         private WorkingDirectory _workingDirectory;
+        private ILogger _logger;
+
+        public JppPlotToPdf1()
+        {
+            _logger = CoreExtensionApplication._current.Container.Resolve<ILogger>();
+        }
 
         public void Execute(WorkingDirectory workingDirectory)
         {
@@ -38,19 +47,22 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                     {
                         using (PlotProgressDialog ppd = new PlotProgressDialog(false, 1, true))
                         {
+                            int bpValue = Convert.ToInt32(Application.GetSystemVariable("BACKGROUNDPLOT"));
+                            Application.SetSystemVariable("BACKGROUNDPLOT", 0);
+
                             ppd.OnBeginPlot();
                             ppd.IsVisible = false;
                             pe.BeginPlot(ppd, null);
 
-                            LayoutSheetController controller = new LayoutSheetController();
-                            controller.Scan(openedDocument);
+                            LayoutSheetController controller = new LayoutSheetController(openedDocument);
+                            controller.Scan();
 
                             foreach (LayoutSheet sheet in controller.Sheets.Values)
                             {
-                                if (PlotAll || DrawingNumbers.Contains(sheet.DrawingNumber))
+                                if (PlotAll || DrawingNumbers.Contains(sheet.TitleBlock.DrawingNumber))
                                 {
                                     string fileName = _workingDirectory.GetPath(
-                                        $"{sheet.JobNumber} - {sheet.DrawingNumber}{sheet.Revision} - {sheet.Name}.pdf");
+                                        $"{sheet.TitleBlock.ProjectNumber} - {sheet.TitleBlock.DrawingNumber}{sheet.TitleBlock.Revision} - {sheet.TitleBlock.Title}.pdf");
 
                                     sheet.Plot(fileName, pe, ppd);
                                 }
@@ -59,10 +71,14 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                             ppd.PlotProgressPos = 100;
                             ppd.OnEndPlot();
                             pe.EndPlot(null);
+
+                            Application.SetSystemVariable("BACKGROUNDPLOT", bpValue);
                         }
                     }
                 }
             }
+
+            openedDocument.CloseAndDiscard();
         }
     }
 }
