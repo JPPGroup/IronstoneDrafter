@@ -3,12 +3,26 @@
   <PropertyGroup>    
     <RootNamespace>Jpp.Ironstone.Draughter</RootNamespace>
     <AssemblyName>IronstoneDraughter</AssemblyName>
-    <TargetFramework>net472</TargetFramework>    
+    <TargetFramework>net472</TargetFramework>
+    <Platforms>x64</Platforms>
+    <Configurations>Debug;Release;DebugLocal;ReleaseLocal</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>  
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugLocal|x64'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Draughter.TaskPayloads.Concretes\**" />
+    <Compile Remove="Draughter.TaskPayloads\**" />
+    <EmbeddedResource Remove="Draughter.TaskPayloads.Concretes\**" />
+    <EmbeddedResource Remove="Draughter.TaskPayloads\**" />
+    <None Remove="Draughter.TaskPayloads.Concretes\**" />
+    <None Remove="Draughter.TaskPayloads\**" />
+  </ItemGroup>
   <ItemGroup>    
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />    
@@ -43,7 +57,7 @@
       <Version>2.9.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.2</Version>
+      <Version>12.0.3</Version>
     </PackageReference>
     <PackageReference Include="NLog">
       <Version>4.6.3</Version>
@@ -57,5 +71,27 @@
 	<PackageReference Include="System.Windows.Interactivity.WPF">
       <Version>2.0.20525</Version>
     </PackageReference>  
-  </ItemGroup>    
+  </ItemGroup>
+  <ItemGroup Condition=" $(Configuration.Contains('Local')) == false ">
+    <PackageReference Include="Jpp.Ironstone.Core">
+      <Version>0.4.0-devb</Version>
+    </PackageReference>
+    <!--<PackageReference Include="Jpp.Ironstone.Structure.ObjectModel">
+      <Version>0.4.0-devb</Version>
+    </PackageReference>-->
+  </ItemGroup>
+  <ItemGroup Condition=" $(Configuration.Contains('Local')) ">
+    <ProjectReference Include="..\ironstone-core\Ironstone Core\Ironstone Core.csproj" />
+    <ProjectReference Include="..\BackgroundPipeline\src\BackgroundPipeline.Autocad\BackgroundPipeline.Autocad.csproj" />
+    <ProjectReference Include="..\BackgroundPipeline\src\BackgroundPipeline\BackgroundPipeline.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Draughter.TaskPayloads.Concretes\Draughter.TaskPayloads.Concretes.csproj" />
+    <ProjectReference Include="Draughter.TaskPayloads\Draughter.TaskPayloads.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="IronstoneConfig.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

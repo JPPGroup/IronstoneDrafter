@@ -3,6 +3,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.PlottingServices;
 using Jpp.Ironstone.DocumentManagement.ObjectModel;
+using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Draughter.TaskPayloads
 {
@@ -41,8 +42,8 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                             ppd.IsVisible = false;
                             pe.BeginPlot(ppd, null);
 
-                            LayoutSheetController controller = new LayoutSheetController(openedDocument);
-                            controller.Scan();
+                            LayoutSheetController controller = new LayoutSheetController();
+                            controller.Scan(openedDocument);
 
                             foreach (LayoutSheet sheet in controller.Sheets.Values)
                             {
