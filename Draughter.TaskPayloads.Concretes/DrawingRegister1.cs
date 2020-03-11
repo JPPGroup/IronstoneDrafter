@@ -56,7 +56,7 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
 
                     foreach (LayoutSheet sheet in controller.Sheets.Values)
                     {
-                        _register.WriteSheet(sheet);
+                        //_register.WriteSheet(sheet);
                     }
                 }
             }
