@@ -30,7 +30,7 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
 
             foreach (string f in _workingDirectory)
             {
-                if (f.EndsWith(".dwg"))
+                if (f.EndsWith(".dwg") && !f.ToLower().Contains("xref"))
                 {
                     OpenScanDrawing(f);
                 }
