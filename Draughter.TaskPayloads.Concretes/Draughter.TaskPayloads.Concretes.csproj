@@ -34,6 +34,7 @@
     <ProjectReference Include="..\..\ironstone-core\Ironstone Core\Ironstone Core.csproj" />    
     <ProjectReference Include="..\..\BackgroundPipeline\src\BackgroundPipeline\BackgroundPipeline.csproj" />
     <ProjectReference Include="..\..\ironstone-object-model\DocumentManagement\DocumentManagementObjectModel.csproj" />
+    <ProjectReference Include="..\..\ironstone-object-model\Housing\HousingObjectModel.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Draughter.TaskPayloads\Draughter.TaskPayloads.csproj" />
