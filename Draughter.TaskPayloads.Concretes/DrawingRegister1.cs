@@ -16,10 +16,12 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
         private WorkingDirectory _workingDirectory;
         private ILogger _logger;
         private DrawingRegister _register;
+        private IUserSettings _settings;
 
         public DrawingRegister1()
         {
             _logger = CoreExtensionApplication._current.Container.Resolve<ILogger>();
+            _settings = CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
         }
 
         public void Execute(WorkingDirectory workingDirectory)
@@ -51,12 +53,13 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
             {
                 using (Transaction trans = openedDocument.TransactionManager.StartTransaction())
                 {
-                    LayoutSheetController controller = new LayoutSheetController(_logger, openedDocument);
+                    LayoutSheetController controller = new LayoutSheetController(_logger, openedDocument, _settings);
                     controller.Scan();
 
                     foreach (LayoutSheet sheet in controller.Sheets.Values)
                     {
-                        //_register.WriteSheet(sheet);
+                        // TODO: Add some way of determining if civil or structural drawing
+                        _register.WriteLayoutSheet(sheet, DrawingType.Structural);
                     }
                 }
             }

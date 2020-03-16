@@ -23,7 +23,6 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
         public string OutlineInputDrawing { get; set; }
         public string ExistingLevelSurfaceName { get; set; }
         public string ProposedLevelSurfaceName { get; set; }
-
         private WorkingDirectory _workingDirectory;
         private ILogger _logger;
         private IUserSettings _settings;

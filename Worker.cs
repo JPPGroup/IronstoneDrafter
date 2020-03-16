@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -78,7 +79,7 @@ namespace Jpp.Ironstone.Draughter
             MessageBoxButton button = MessageBoxButton.OK;
             MessageBoxImage icon = MessageBoxImage.Information;
 
-            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
+            Task.Run(() =>
             {
                 var result = MessageBox.Show(messageBoxText, caption, MessageBoxButton.OK,
                     MessageBoxImage.Information);
@@ -87,10 +88,10 @@ namespace Jpp.Ironstone.Draughter
                 {
                     _running = false;
                 }
-            }));
+            });
         }
 
-        private void WorkLoop()
+        private async void WorkLoop()
         {
             // Check for user input events
             System.Windows.Forms.Application.DoEvents();
@@ -115,9 +116,10 @@ namespace Jpp.Ironstone.Draughter
 
                     if (_currentTask != null)
                     {
+                        Debugger.Launch();
                         WorkOnRemoteTask();
                         _connection.SendResponse(_currentTask);
-                        _connection.TaskComplete();
+                        //_connection.TaskComplete();
 
                         _currentTask = null;
                     }
@@ -132,7 +134,7 @@ namespace Jpp.Ironstone.Draughter
 
             Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument
                 .TransactionManager.QueueForGraphicsFlush();
-            Thread.Sleep(WORK_DELAY);
+            await Task.Delay(WORK_DELAY);
         }
 
         private void HandleError()

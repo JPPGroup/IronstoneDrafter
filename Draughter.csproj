@@ -6,14 +6,17 @@
     <TargetFramework>net472</TargetFramework>
     <Platforms>x64</Platforms>
     <Configurations>Debug;Release;DebugLocal;ReleaseLocal</Configurations>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <AspectInjectorEnabled>false</AspectInjectorEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugLocal|x64'">
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <AspectInjectorEnabled>false</AspectInjectorEnabled>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Draughter.TaskPayloads.Concretes\**" />
@@ -38,9 +41,6 @@
     <PackageReference Include="AspectInjector">
       <Version>2.3.1</Version>
     </PackageReference>
-    <PackageReference Include="Common">
-      <Version>0.1.5</Version>
-    </PackageReference>    
     <PackageReference Include="Jpp.Ironstone.BaseApi.2019">
       <Version>0.1.1</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
@@ -62,12 +62,10 @@
     <PackageReference Include="NLog">
       <Version>4.6.3</Version>
     </PackageReference>
-    <PackageReference Include="Unity">
-      <Version>5.9.7</Version>
-    </PackageReference>
-	<PackageReference Include="RabbitMQ.Client">
+    <PackageReference Include="RabbitMQ.Client">
       <Version>5.1.2</Version>
     </PackageReference>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.0" />
 	<PackageReference Include="System.Windows.Interactivity.WPF">
       <Version>2.0.20525</Version>
     </PackageReference>  
@@ -76,12 +74,10 @@
     <PackageReference Include="Jpp.Ironstone.Core">
       <Version>0.4.0-devb</Version>
     </PackageReference>
-    <!--<PackageReference Include="Jpp.Ironstone.Structure.ObjectModel">
-      <Version>0.4.0-devb</Version>
-    </PackageReference>-->
   </ItemGroup>
   <ItemGroup Condition=" $(Configuration.Contains('Local')) ">
     <ProjectReference Include="..\ironstone-core\Ironstone Core\Ironstone Core.csproj" />
+    <ProjectReference Include="..\ironstone-core\Ironstone Core UI\Ironstone Core UI.csproj" />
     <ProjectReference Include="..\BackgroundPipeline\src\BackgroundPipeline.Autocad\BackgroundPipeline.Autocad.csproj" />
     <ProjectReference Include="..\BackgroundPipeline\src\BackgroundPipeline\BackgroundPipeline.csproj" />
   </ItemGroup>

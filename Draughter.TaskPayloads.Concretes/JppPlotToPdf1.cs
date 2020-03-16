@@ -18,10 +18,12 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
 
         private WorkingDirectory _workingDirectory;
         private ILogger _logger;
+        private IUserSettings _settings;
 
         public JppPlotToPdf1()
         {
             _logger = CoreExtensionApplication._current.Container.Resolve<ILogger>();
+            _settings = CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
         }
 
         public void Execute(WorkingDirectory workingDirectory)
@@ -55,7 +57,7 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                             ppd.IsVisible = false;
                             pe.BeginPlot(ppd, null);
 
-                            LayoutSheetController controller = new LayoutSheetController(_logger, openedDocument);
+                            LayoutSheetController controller = new LayoutSheetController(_logger, openedDocument, _settings);
                             controller.Scan();
 
                             foreach (LayoutSheet sheet in controller.Sheets.Values)
