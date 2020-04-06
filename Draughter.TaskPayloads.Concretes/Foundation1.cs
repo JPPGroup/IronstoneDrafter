@@ -1,22 +1,30 @@
-﻿using Autodesk.AutoCAD.ApplicationServices;
+﻿using System.IO;
+using System.Linq;
+using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
+using Autodesk.AutoCAD.Geometry;
+using Autodesk.Civil;
 using Autodesk.Civil.ApplicationServices;
+using Autodesk.Civil.DatabaseServices;
+using Jpp.BackgroundPipeline;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.Core.Autocad;
 using Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.DocumentManagement.ObjectModel;
+using Jpp.Ironstone.DocumentManagement.ObjectModel.DrawingTypes;
 using Jpp.Ironstone.Draughter.TaskPayloads.Subtasks;
 using Jpp.Ironstone.Housing.ObjectModel;
 using Jpp.Ironstone.Housing.ObjectModel.Concept;
 using Jpp.Ironstone.Structures.ObjectModel;
 using Unity;
 using Application = Autodesk.AutoCAD.ApplicationServices.Application;
+using Entity = Autodesk.AutoCAD.DatabaseServices.Entity;
 
 namespace Jpp.Ironstone.Draughter.TaskPayloads
 {
-    class Foundation1
+    class Foundation1 : ITaskPayload
     {
         public string JobNumber { get; set; }
         public bool CreateDrawing { get; set; }
@@ -37,29 +45,33 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
         public void Execute(WorkingDirectory workingDirectory)
         {
             _workingDirectory = workingDirectory;
-            _controller = new ProjectController(workingDirectory.GetPath(""));
+            _controller = new ProjectController(CoreExtensionApplication._current.Container, workingDirectory.GetPath(""));
 
             CreateXref();
 
-            if(CreateDrawing)
-                CreateIssueDrawing();
+            if (CreateDrawing)
+                _controller.CreateDrawing<FoundationConceptDrawingType>(JobNumber);
         }
 
         private void CreateXref()
         {
-            using (Document foundationXref = _controller.CreateXref(@"xref\ConceptFoundations.dwg"))
+            using (FoundationXrefDrawingType foundationXref = _controller.GetXref<FoundationXrefDrawingType>())
             {
-                CopyOutlineFromSource(foundationXref);
-                CreateConceptFoundations(foundationXref);
+                CopyOutlineFromSource(foundationXref.GetDocument());
+                CreateConceptFoundations(foundationXref.GetDocument());
 
-                foundationXref.Database.Save();
-                foundationXref.CloseAndDiscard();
+                foundationXref.GetDocument().Database.SaveAs(foundationXref.GetPath(), DwgVersion.Current);
             }
         }
 
         private void CopyOutlineFromSource(Document targetDocument)
         {
-            using (Document source = Application.DocumentManager.Open(OutlineInputDrawing))
+            string inputFilePath = _workingDirectory.GetPath(OutlineInputDrawing);
+
+            if(!System.IO.File.Exists(inputFilePath))
+                throw new FileNotFoundException("Plot outline input file not found");
+
+            using (Document source = Application.DocumentManager.Open(inputFilePath))
             {
                 Document oldActiveDocument = Application.DocumentManager.MdiActiveDocument;
                 Application.DocumentManager.MdiActiveDocument = source;
@@ -93,6 +105,7 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                             sourecObjects.Add(surfaceId);
                         }
 
+
                         source.Database.WblockCloneObjects(sourecObjects, desTableRecord.ObjectId, new IdMapping(),
                             DuplicateRecordCloning.MangleName, false);
 
@@ -109,6 +122,7 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
         {
             Application.DocumentManager.MdiActiveDocument = document;
 
+            using (DocumentLock foundationLock = document.LockDocument())
             using (Transaction trans = document.TransactionManager.StartTransaction())
             {
                 SoilProperties properties =
@@ -176,15 +190,13 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
             }
         }
 
-        private void CreateIssueDrawing()
+        /*private void CreateIssueDrawing()
         {
             Document issueDrawing = _controller.CreateDrawing($"{JobNumber} - 000P1 - Preliminary Foundation Assessment.dwg");
-            Application.DocumentManager.MdiActiveDocument = issueDrawing;
+            
 
-            LayoutSheetController controller = new LayoutSheetController(_logger, issueDrawing, _settings);
-            controller.AddLayout("000 - PFA", PaperSize.A1Landscape);
-
-            issueDrawing.Database.Save();
-        }
+            string path = _workingDirectory.GetPath($"{JobNumber} - 000P1 - Preliminary Foundation Assessment.dwg");
+            issueDrawing.CloseAndSave(path);
+        }*/
     }
 }

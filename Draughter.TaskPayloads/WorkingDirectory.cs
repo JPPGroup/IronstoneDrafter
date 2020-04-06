@@ -18,12 +18,12 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
 
             _path = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetTempFileName()));
 
-            Directory.CreateDirectory(_path);
-
             //Save the files
             foreach (File file in _fileRecord)
             {
-                using (FileStream fs = System.IO.File.Create(Path.Combine(_path, file.Name)))
+                string path = Path.Combine(_path, file.Name);
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                using (FileStream fs = System.IO.File.Create(path))
                 {
                     fs.Write(file.Data, 0, file.Data.Length);
                 }

@@ -22,10 +22,10 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads.Subtasks
                 DBObject dbObject = trans.GetObject(id, OpenMode.ForRead);
                 Curve c = dbObject as Curve;
                 if (c == null)
-                    break;
+                    continue;
 
                 if (c.Closed != true)
-                    break;
+                    continue;
 
                 if (c.Area > MinimumArea && c.Area < MaximumArea)
                 {

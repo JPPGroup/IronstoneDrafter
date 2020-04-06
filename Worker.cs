@@ -142,8 +142,8 @@ namespace Jpp.Ironstone.Draughter
             if (_currentTask != null)
             {
                 _currentTask.ResponseStatus = ResponseStatus.UnkownFailure;
-                _connection.SendResponse(_currentTask);
-                _connection.TaskFailed();
+                //_connection.SendResponse(_currentTask);
+                //_connection.TaskFailed();
 
                 _currentTask = null;
             }
@@ -179,6 +179,9 @@ namespace Jpp.Ironstone.Draughter
         private void WorkOnRemoteTask()
         {
             WorkingDirectory workDir = new WorkingDirectory(_currentTask.WorkingDirectory);
+
+            if(_currentTask.TaskPayload == null)
+                _currentTask.Deserialize();
 
             foreach (ITaskPayload taskPayload in _currentTask.TaskPayload)
             {
