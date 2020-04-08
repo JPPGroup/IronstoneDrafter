@@ -34,7 +34,7 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
             }
             else
             {
-                _register = new DrawingRegister($"{JobNumber} - Drawing Register.xlsx");
+                _register = new DrawingRegister(_workingDirectory.GetPath($"{JobNumber} - Drawing Register.xlsx"));
             }
 
             foreach (string f in _workingDirectory)

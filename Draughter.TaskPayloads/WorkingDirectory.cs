@@ -33,7 +33,20 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
         public List<File> Export()
         {
             List<File> outFiles = new List<File>();
-            foreach (string file in Directory.GetFiles(_path))
+            
+            ExportDirectory(outFiles, _path);
+
+            return outFiles;
+        }
+
+        private void ExportDirectory(List<File> files, string path)
+        {
+            foreach (string s in Directory.GetDirectories(path))
+            {
+                ExportDirectory(files, s);
+            }
+
+            foreach (string file in Directory.GetFiles(path))
             {
                 File newFile = new File()
                 {
@@ -41,10 +54,8 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                     Data = System.IO.File.ReadAllBytes(file)
                 };
 
-                outFiles.Add(newFile);
+                files.Add(newFile);
             }
-
-            return outFiles;
         }
 
         public string GetPath(string fileName)

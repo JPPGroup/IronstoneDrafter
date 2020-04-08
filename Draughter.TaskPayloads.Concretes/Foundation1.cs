@@ -27,6 +27,8 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
     class Foundation1 : ITaskPayload
     {
         public string JobNumber { get; set; }
+        public string Client { get; set; }
+        public string JobName { get; set; }
         public bool CreateDrawing { get; set; }
         public string OutlineInputDrawing { get; set; }
         public string ExistingLevelSurfaceName { get; set; }
@@ -46,6 +48,11 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
         {
             _workingDirectory = workingDirectory;
             _controller = new ProjectController(CoreExtensionApplication._current.Container, workingDirectory.GetPath(""));
+
+            // TODO: Add code here to sense check the length and add line breaks if needed
+            _controller.ProjectNumber = JobNumber;
+            _controller.Client = Client;
+            _controller.ProjectName = JobName;
 
             CreateXref();
 

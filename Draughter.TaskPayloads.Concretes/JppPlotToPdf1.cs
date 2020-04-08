@@ -67,7 +67,15 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                                     string fileName = _workingDirectory.GetPath(
                                         $"{sheet.TitleBlock.ProjectNumber} - {sheet.TitleBlock.DrawingNumber}{sheet.TitleBlock.Revision} - {sheet.TitleBlock.Title}.pdf");
 
-                                    sheet.Plot(fileName, pe, ppd);
+                                    try
+                                    {
+                                        sheet.Plot(fileName, pe, ppd);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        _logger.Entry($"Sheet {sheet.Name} in {openedDocument.Name} failed to plot.", Severity.Error);
+                                        _logger.LogException(e);
+                                    }
                                 }
                             }
 
