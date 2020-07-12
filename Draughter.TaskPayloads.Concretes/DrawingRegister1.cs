@@ -5,6 +5,8 @@ using Jpp.Ironstone.Core;
 using Jpp.Ironstone.DocumentManagement.ObjectModel;
 using Unity;
 using Autodesk.AutoCAD.DatabaseServices;
+using Jpp.ProjectDocuments.Register;
+using System.Linq;
 
 namespace Jpp.Ironstone.Draughter.TaskPayloads
 {
@@ -44,6 +46,8 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                     OpenScanDrawing(f);
                 }
             }
+
+            _register.Write();
         }
 
         private void OpenScanDrawing(string filePath)
@@ -59,12 +63,31 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                     foreach (LayoutSheet sheet in controller.Sheets.Values)
                     {
                         // TODO: Add some way of determining if civil or structural drawing
-                        _register.WriteLayoutSheet(sheet, DrawingType.Structural);
+                        WriteLayoutSheet(sheet, DrawingType.Structural);
                     }
                 }
             }
 
             openedDocument.CloseAndDiscard();
+        }
+
+        private void WriteLayoutSheet(LayoutSheet sheet, DrawingType type)
+        {
+            DrawingInformation drawingInformation = _register.Drawings.FirstOrDefault(di => di.DrawingNumber == sheet.TitleBlock.DrawingNumber);
+            if (drawingInformation == null)
+            {
+                drawingInformation = new DrawingInformation();
+                drawingInformation.DrawingNumber = sheet.TitleBlock.DrawingNumber;
+                _register.Drawings.Add(drawingInformation);
+
+                // TODO: Add code here for sorting into a sensible order
+            }
+
+            drawingInformation.DrawingTitle = sheet.TitleBlock.Title;
+            drawingInformation.Type = type;
+            // drawingInformation.IssueType = sheet.TitleBlock. // TODO: This needs to be found
+            drawingInformation.CurrentIssue = sheet.TitleBlock.Revision;
+            
         }
     }
 }

@@ -31,13 +31,16 @@
     <Reference Include="System.Xml" />    
   </ItemGroup>  
   <ItemGroup Condition=" $(Configuration.Contains('Local')) ">
-    <ProjectReference Include="..\..\ironstone-core\Ironstone Core\Ironstone Core.csproj" />
-    <ProjectReference Include="..\..\ironstone-object-model\DocumentManagement\DocumentManagementObjectModel.csproj" />
+    <ProjectReference Include="..\..\IronstoneCore\IronstoneCore\IronstoneCore.csproj" />
+    <ProjectReference Include="..\..\IronstoneObjectModel\DocumentManagement\DocumentManagementObjectModel.csproj" />
     <ProjectReference Include="..\..\BackgroundPipeline\src\BackgroundPipeline\BackgroundPipeline.csproj" />
-    <ProjectReference Include="..\..\ironstone-object-model\Housing\HousingObjectModel.csproj" />
+    <ProjectReference Include="..\..\IronstoneObjectModel\DocumentManagement\DocumentManagementObjectModel.csproj" />
+    <ProjectReference Include="..\..\IronstoneObjectModel\Housing\HousingObjectModel.csproj" />
+    <ProjectReference Include="..\..\IronstoneObjectModel\Structures\StructuresObjectModel.csproj" />
+    <ProjectReference Include="..\..\Common\src\Common\Common.csproj" />
+    <ProjectReference Include="..\..\ProjectDocuments\src\ProjectDocuments\ProjectDocuments.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\src\Common\Common.csproj" />
     <ProjectReference Include="..\Draughter.TaskPayloads\Draughter.TaskPayloads.csproj" />
   </ItemGroup>
   <ItemGroup>
