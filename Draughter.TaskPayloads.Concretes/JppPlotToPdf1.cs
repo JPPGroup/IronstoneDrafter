@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.PlottingServices;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
+using Jpp.BackgroundPipeline;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.DocumentManagement.ObjectModel;
@@ -60,12 +64,15 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                             LayoutSheetController controller = new LayoutSheetController(_logger, openedDocument, _settings);
                             controller.Scan();
 
+                            List<string> expectedFiles = new List<string>();
+
                             foreach (LayoutSheet sheet in controller.Sheets.Values)
                             {
                                 if (PlotAll || DrawingNumbers.Contains(sheet.TitleBlock.DrawingNumber))
                                 {
                                     string fileName = _workingDirectory.GetPath(
                                         $"{sheet.TitleBlock.ProjectNumber} - {sheet.TitleBlock.DrawingNumber}{sheet.TitleBlock.Revision} - {sheet.TitleBlock.Title}.pdf");
+                                    expectedFiles.Add(fileName);
 
                                     try
                                     {
@@ -82,6 +89,24 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                             ppd.PlotProgressPos = 100;
                             ppd.OnEndPlot();
                             pe.EndPlot(null);
+
+                            //Check files have been created
+                            bool allPresent = false;
+
+                            while (!allPresent)
+                            {
+                                Thread.Sleep(1000);
+                                bool present = true;
+                                foreach (string expectedFile in expectedFiles)
+                                {
+                                    if (!System.IO.File.Exists(expectedFile))
+                                    {
+                                        present = false;
+                                    }
+                                }
+
+                                allPresent = present;
+                            }
 
                             Application.SetSystemVariable("BACKGROUNDPLOT", bpValue);
                         }

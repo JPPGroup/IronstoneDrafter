@@ -49,7 +49,7 @@ namespace Jpp.Ironstone.Draughter
             DocumentCollection dm = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager;
 
             // TODO: Pull username and password from settings file
-            using (_connection = new WorkerConnection("mq.group.cluster.jppuk.net", "jpp", "jpp"))
+            using (_connection = new WorkerConnection("jppcluster", "jpp", "jpp"))
             {
                 using (dm.MdiActiveDocument.LockDocument())
                 {
@@ -116,8 +116,9 @@ namespace Jpp.Ironstone.Draughter
                     {
                         Debugger.Launch();
                         WorkOnRemoteTask();
+                        _currentTask.ResponseStatus = ResponseStatus.OK;
                         _connection.SendResponse(_currentTask);
-                        //_connection.TaskComplete();
+                        _connection.TaskComplete();
 
                         _currentTask = null;
                     }
