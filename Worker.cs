@@ -10,7 +10,8 @@ using Jpp.BackgroundPipeline;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Draughter.TaskPayloads;
-using Unity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MessageBox = System.Windows.MessageBox;
 
 namespace Jpp.Ironstone.Draughter
@@ -29,9 +30,9 @@ namespace Jpp.Ironstone.Draughter
         private bool _running;
         private TerminateMessageFilter _filter;
 
-        private ILogger _logger;
+        private ILogger<Worker> _logger;
 
-        public Worker(ILogger log)
+        public Worker(ILogger<Worker> log)
         {
             _logger = log;
         }
@@ -40,7 +41,7 @@ namespace Jpp.Ironstone.Draughter
         [CommandMethod("D_BeginWork", CommandFlags.Session)]
         public static void BeginWorkCommand()
         {
-            Worker worker = new Worker(CoreExtensionApplication._current.Container.Resolve<ILogger>());
+            Worker worker = new Worker(CoreExtensionApplication._current.Container.GetRequiredService<ILogger<Worker>>());
             worker.BeginWork();
         }
 
@@ -95,7 +96,7 @@ namespace Jpp.Ironstone.Draughter
             System.Windows.Forms.Application.DoEvents();
             if (_filter.Canceled == true)
             {
-                _logger.Entry("\nWork cancelled", Severity.Information);
+                _logger.LogInformation("Work cancelled");
                 _running = false;
                 return;
             }
@@ -127,7 +128,7 @@ namespace Jpp.Ironstone.Draughter
             }
             catch (System.Exception e)
             {
-                _logger.LogException(e);
+                _logger.LogError(e, "Exception in work loop");
                 HandleError();
             }
 

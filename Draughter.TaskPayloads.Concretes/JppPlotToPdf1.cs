@@ -10,7 +10,9 @@ using Jpp.BackgroundPipeline;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.DocumentManagement.ObjectModel;
-using Unity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Draughter.TaskPayloads
@@ -21,13 +23,13 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
         public bool PlotAll { get; set; }
 
         private WorkingDirectory _workingDirectory;
-        private ILogger _logger;
-        private IUserSettings _settings;
+        private ILogger<JppPlotToPdf1> _logger;
+        private IConfiguration _settings;
 
         public JppPlotToPdf1()
         {
-            _logger = CoreExtensionApplication._current.Container.Resolve<ILogger>();
-            _settings = CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
+            _logger = CoreExtensionApplication._current.Container.GetRequiredService<ILogger<JppPlotToPdf1>>();
+            _settings = CoreExtensionApplication._current.Container.GetRequiredService<IConfiguration>();
         }
 
         public void Execute(WorkingDirectory workingDirectory)
@@ -61,7 +63,8 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                             ppd.IsVisible = false;
                             pe.BeginPlot(ppd, null);
 
-                            LayoutSheetController controller = new LayoutSheetController(_logger, openedDocument, _settings);
+                            var coreLogger = CoreExtensionApplication._current.Container.GetRequiredService<ILogger<CoreExtensionApplication>>();
+                            LayoutSheetController controller = new LayoutSheetController(coreLogger, openedDocument, _settings);
                             controller.Scan();
 
                             List<string> expectedFiles = new List<string>();
@@ -80,8 +83,7 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                                     }
                                     catch (Exception e)
                                     {
-                                        _logger.Entry($"Sheet {sheet.Name} in {openedDocument.Name} failed to plot.", Severity.Error);
-                                        _logger.LogException(e);
+                                        _logger.LogError(e, $"Sheet {sheet.Name} in {openedDocument.Name} failed to plot.");
                                     }
                                 }
                             }

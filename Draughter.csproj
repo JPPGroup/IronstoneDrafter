@@ -39,7 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AspectInjector">
-      <Version>2.4.0</Version>
+      <Version>2.5.1-pre1</Version>
     </PackageReference>
     <PackageReference Include="Jpp.Ironstone.BaseApi.2019">
       <Version>0.1.1</Version>
@@ -59,7 +59,7 @@
     <PackageReference Include="RabbitMQ.Client">
       <Version>5.1.2</Version>
     </PackageReference>
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
 	<PackageReference Include="System.Windows.Interactivity.WPF">
       <Version>2.0.20525</Version>
     </PackageReference>  

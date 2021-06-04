@@ -18,7 +18,9 @@ using Jpp.Ironstone.Draughter.TaskPayloads.Subtasks;
 using Jpp.Ironstone.Housing.ObjectModel;
 using Jpp.Ironstone.Housing.ObjectModel.Concept;
 using Jpp.Ironstone.Structures.ObjectModel;
-using Unity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Application = Autodesk.AutoCAD.ApplicationServices.Application;
 using Entity = Autodesk.AutoCAD.DatabaseServices.Entity;
 
@@ -34,14 +36,14 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
         public string ExistingLevelSurfaceName { get; set; }
         public string ProposedLevelSurfaceName { get; set; }
         private WorkingDirectory _workingDirectory;
-        private ILogger _logger;
-        private IUserSettings _settings;
+        private ILogger<Foundation1> _logger;
+        private IConfiguration _settings;
         private ProjectController _controller;
 
         public Foundation1()
         {
-            _logger = CoreExtensionApplication._current.Container.Resolve<ILogger>();
-            _settings = CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
+            _logger = CoreExtensionApplication._current.Container.GetRequiredService<ILogger<Foundation1>>();
+            _settings = CoreExtensionApplication._current.Container.GetRequiredService<IConfiguration>();
         }
 
         public void Execute(WorkingDirectory workingDirectory)

@@ -3,10 +3,12 @@ using Jpp.Ironstone.Core.ServiceInterfaces;
 using Autodesk.AutoCAD.ApplicationServices;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.DocumentManagement.ObjectModel;
-using Unity;
 using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.ProjectDocuments.Register;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Jpp.Ironstone.Draughter.TaskPayloads
 {
@@ -16,14 +18,14 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
         public string JobNumber { get; set; }
         
         private WorkingDirectory _workingDirectory;
-        private ILogger _logger;
+        private ILogger<DrawingRegister1> _logger;
         private DrawingRegister _register;
-        private IUserSettings _settings;
+        private IConfiguration _settings;
 
         public DrawingRegister1()
         {
-            _logger = CoreExtensionApplication._current.Container.Resolve<ILogger>();
-            _settings = CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
+            _logger = CoreExtensionApplication._current.Container.GetRequiredService<ILogger<DrawingRegister1>>();
+            _settings = CoreExtensionApplication._current.Container.GetRequiredService<IConfiguration>();
         }
 
         public void Execute(WorkingDirectory workingDirectory)
@@ -57,7 +59,8 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
             {
                 using (Transaction trans = openedDocument.TransactionManager.StartTransaction())
                 {
-                    LayoutSheetController controller = new LayoutSheetController(_logger, openedDocument, _settings);
+                    var coreLogger = CoreExtensionApplication._current.Container.GetRequiredService<ILogger<CoreExtensionApplication>>();
+                    LayoutSheetController controller = new LayoutSheetController(coreLogger, openedDocument, _settings);
                     controller.Scan();
 
                     foreach (LayoutSheet sheet in controller.Sheets.Values)
