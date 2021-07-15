@@ -49,7 +49,8 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
         public void Execute(WorkingDirectory workingDirectory)
         {
             _workingDirectory = workingDirectory;
-            _controller = new ProjectController(CoreExtensionApplication._current.Container, workingDirectory.GetPath(""));
+            var generalLogger = CoreExtensionApplication._current.Container.GetRequiredService<ILogger<CoreExtensionApplication>>();
+            _controller = new ProjectController(CoreExtensionApplication._current.Container, generalLogger, _settings, workingDirectory.GetPath(""));
 
             // TODO: Add code here to sense check the length and add line breaks if needed
             _controller.ProjectNumber = JobNumber;

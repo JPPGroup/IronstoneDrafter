@@ -64,7 +64,7 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                             pe.BeginPlot(ppd, null);
 
                             var coreLogger = CoreExtensionApplication._current.Container.GetRequiredService<ILogger<CoreExtensionApplication>>();
-                            LayoutSheetController controller = new LayoutSheetController(coreLogger, openedDocument, _settings);
+                            LayoutSheetController controller = new LayoutSheetController(coreLogger, openedDocument.Database, _settings);
                             controller.Scan();
 
                             List<string> expectedFiles = new List<string>();

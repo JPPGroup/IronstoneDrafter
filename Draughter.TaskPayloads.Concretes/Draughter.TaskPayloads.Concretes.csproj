@@ -32,9 +32,8 @@
   </ItemGroup>  
   <ItemGroup Condition=" $(Configuration.Contains('Local')) ">
     <ProjectReference Include="..\..\IronstoneCore\IronstoneCore\IronstoneCore.csproj" />
-    <ProjectReference Include="..\..\IronstoneObjectModel\DocumentManagement\DocumentManagementObjectModel.csproj" />
+    <ProjectReference Include="..\..\IronstoneObjectModel\DocumentManagement\IronstoneDocumentManagementObjectModel.csproj" />
     <ProjectReference Include="..\..\BackgroundPipeline\src\BackgroundPipeline\BackgroundPipeline.csproj" />
-    <ProjectReference Include="..\..\IronstoneObjectModel\DocumentManagement\DocumentManagementObjectModel.csproj" />
     <ProjectReference Include="..\..\IronstoneObjectModel\Housing\HousingObjectModel.csproj" />
     <ProjectReference Include="..\..\IronstoneObjectModel\Structures\StructuresObjectModel.csproj" />
     <ProjectReference Include="..\..\Common\src\Common\Common.csproj" />

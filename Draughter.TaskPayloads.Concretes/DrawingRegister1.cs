@@ -60,7 +60,7 @@ namespace Jpp.Ironstone.Draughter.TaskPayloads
                 using (Transaction trans = openedDocument.TransactionManager.StartTransaction())
                 {
                     var coreLogger = CoreExtensionApplication._current.Container.GetRequiredService<ILogger<CoreExtensionApplication>>();
-                    LayoutSheetController controller = new LayoutSheetController(coreLogger, openedDocument, _settings);
+                    LayoutSheetController controller = new LayoutSheetController(coreLogger, openedDocument.Database, _settings);
                     controller.Scan();
 
                     foreach (LayoutSheet sheet in controller.Sheets.Values)
