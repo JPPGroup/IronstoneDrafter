@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">  
   <PropertyGroup>    
-    <RootNamespace>Jpp.Ironstone.Draughter</RootNamespace>
-    <AssemblyName>IronstoneDraughter</AssemblyName>
+    <RootNamespace>Jpp.Ironstone.Draughter.UI</RootNamespace>
+    <AssemblyName>IronstoneDraughterUI</AssemblyName>
     <TargetFramework>net472</TargetFramework>
     <Platforms>x64</Platforms>
     <Configurations>Debug;Release;DebugLocal;ReleaseLocal</Configurations>
@@ -42,15 +42,15 @@
       <Version>2.5.1-pre1</Version>
     </PackageReference>
     <PackageReference Include="Jpp.Ironstone.BaseApi.2019">
-      <Version>0.2.0</Version>
+      <Version>0.1.1</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Jpp.Ironstone.C3dApi.2019">
-      <Version>0.2.0</Version>
+      <Version>0.1.1</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
 	<PackageReference Include="Jpp.Ironstone.UiApi.2019">
-      <Version>0.2.0</Version>
+      <Version>0.1.1</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
@@ -68,15 +68,6 @@
     <PackageReference Include="Jpp.Ironstone.Core">
       <Version>0.4.0-devb</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup Condition=" $(Configuration.Contains('Local')) ">
-    <ProjectReference Include="..\IronstoneCore\IronstoneCore\IronstoneCore.csproj" />
-    <ProjectReference Include="..\BackgroundPipeline\src\BackgroundPipeline.Autocad\BackgroundPipeline.Autocad.csproj" />
-    <ProjectReference Include="..\BackgroundPipeline\src\BackgroundPipeline\BackgroundPipeline.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="Draughter.TaskPayloads.Concretes\Draughter.TaskPayloads.Concretes.csproj" />
-    <ProjectReference Include="Draughter.TaskPayloads\Draughter.TaskPayloads.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="IronstoneConfig.xml">
