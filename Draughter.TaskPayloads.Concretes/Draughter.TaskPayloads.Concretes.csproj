@@ -16,6 +16,16 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="DrawingRegister1.csold" />
+    <None Remove="Foundation1.csold" />
+    <None Remove="JppPlotToPdf1.csold" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DrawingRegister1.csold" />
+    <Compile Include="Foundation1.csold" />
+    <Compile Include="JppPlotToPdf1.csold" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />    
@@ -32,11 +42,7 @@
   </ItemGroup>  
   <ItemGroup Condition=" $(Configuration.Contains('Local')) ">
     <ProjectReference Include="..\..\IronstoneCore\IronstoneCore\IronstoneCore.csproj" />
-    <ProjectReference Include="..\..\IronstoneObjectModel\DocumentManagement\DocumentManagementObjectModel.csproj" />
     <ProjectReference Include="..\..\BackgroundPipeline\src\BackgroundPipeline\BackgroundPipeline.csproj" />
-    <ProjectReference Include="..\..\IronstoneObjectModel\DocumentManagement\DocumentManagementObjectModel.csproj" />
-    <ProjectReference Include="..\..\IronstoneObjectModel\Housing\HousingObjectModel.csproj" />
-    <ProjectReference Include="..\..\IronstoneObjectModel\Structures\StructuresObjectModel.csproj" />
     <ProjectReference Include="..\..\Common\src\Common\Common.csproj" />
     <ProjectReference Include="..\..\ProjectDocuments\src\ProjectDocuments\ProjectDocuments.csproj" />
   </ItemGroup>
